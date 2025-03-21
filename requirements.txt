@@ -1,0 +1,31 @@
+# 基础科学计算和数据处理
+numpy>=1.20.0         # 科学计算库，用于数值运算
+pandas>=1.3.0         # 数据分析库，用于数据处理和分析
+scikit-learn>=1.0.0   # 机器学习库，用于数据预处理和评估指标
+
+# 深度学习框架
+torch>=1.10.0         # PyTorch深度学习框架
+torchvision>=0.11.0   # PyTorch计算机视觉库
+torchaudio>=0.10.0    # PyTorch音频处理库
+
+# 图神经网络
+torch-geometric>=2.0.0  # PyTorch几何库，用于图神经网络
+torch-scatter>=2.0.9    # PyTorch散射操作，用于图神经网络中的聚合操作
+torch-sparse>=0.6.13    # PyTorch稀疏矩阵操作
+torch-cluster>=1.6.0    # PyTorch聚类操作
+torch-spline-conv>=1.2.1  # PyTorch样条卷积操作
+
+# 蛋白质序列模型
+fair-esm>=2.0.0        # Facebook的进化尺度建模，用于蛋白质序列特征提取
+
+# 分子处理
+rdkit>=2022.03.1       # 化学信息学工具包，用于分子处理和特征提取
+
+# 可视化和日志
+tensorboard>=2.8.0     # TensorBoard可视化工具
+matplotlib>=3.5.0      # 绘图库，用于数据可视化
+seaborn>=0.11.2        # 基于matplotlib的高级可视化库
+tqdm>=4.62.0           # 进度条库，用于显示进度
+
+# 其他工具
+pyyaml>=6.0            # YAML解析器，用于配置文件
