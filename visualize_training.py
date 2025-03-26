@@ -45,9 +45,9 @@ def set_chinese_font():
 def parse_args():
     """解析命令行参数"""
     parser = argparse.ArgumentParser(description='DeepBindNet训练可视化脚本')
-    parser.add_argument('--log_dir', type=str, default='outputs_optimized/logs',
+    parser.add_argument('--log_dir', type=str, default='outputs/logs',
                         help='TensorBoard日志目录')
-    parser.add_argument('--output_dir', type=str, default='outputs_optimized/visualizations',
+    parser.add_argument('--output_dir', type=str, default='outputs/visualizations',
                         help='可视化输出目录')
     return parser.parse_args()
 
