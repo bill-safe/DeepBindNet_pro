@@ -78,7 +78,7 @@ python train_optimized.py \
 
 ```bash
 python visualize_predictions.py \
-    --results_file outputs/optimized_huber_weighted/test_results.pkl \
+    --results_file outputs\1\test_results.pkl \
     --output_dir outputs/optimized_huber_weighted/visualizations \
     --num_bins 5
 ```

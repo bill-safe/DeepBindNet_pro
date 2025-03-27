@@ -14,8 +14,8 @@ def test_fusion_modules():
     测试并比较标准跨模态注意力和门控跨模态注意力
     """
     # 设置随机种子以确保可重复性
-    torch.manual_seed(42)
-    np.random.seed(42)
+    torch.manual_seed(54243)
+    np.random.seed(54243)
     
     # 创建融合模块
     standard_fusion = CrossAttentionFusion(

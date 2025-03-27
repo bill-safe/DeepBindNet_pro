@@ -21,12 +21,13 @@ import subprocess
 import platform
 import argparse
 import pkg_resources
+import re
 
 def parse_args():
     """解析命令行参数"""
     parser = argparse.ArgumentParser(description='安装 DeepBindNet 环境')
     parser.add_argument('--cpu-only', action='store_true', help='仅安装 CPU 版本（不使用 GPU）')
-    parser.add_argument('--cuda-version', type=str, help='指定 CUDA 版本（例如 11.3）')
+    parser.add_argument('--cuda-version', type=str, help='指定 CUDA 版本（例如 11.8 或 12.1）')
     return parser.parse_args()
 
 def run_command(command, description=None):
@@ -51,20 +52,18 @@ def detect_cuda():
         result = subprocess.run("nvcc --version", shell=True, capture_output=True, text=True)
         if result.returncode == 0:
             # 解析版本字符串
-            for line in result.stdout.split('\n'):
-                if "release" in line and "V" in line:
-                    version_str = line.split("V")[-1].split(".")[0:2]
-                    return ".".join(version_str)
+            version_match = re.search(r'release (\d+\.\d+)', result.stdout)
+            if version_match:
+                return version_match.group(1)
         
         # 如果 nvcc 不可用，尝试从 nvidia-smi
         result = subprocess.run("nvidia-smi", shell=True, capture_output=True, text=True)
         if result.returncode == 0:
-            for line in result.stdout.split('\n'):
-                if "CUDA Version:" in line:
-                    version_str = line.split("CUDA Version:")[-1].strip()
-                    return version_str.split(" ")[0]
-    except:
-        pass
+            version_match = re.search(r'CUDA Version: (\d+\.\d+)', result.stdout)
+            if version_match:
+                return version_match.group(1)
+    except Exception as e:
+        print(f"检测 CUDA 版本时出错: {e}")
     
     return None
 
@@ -83,8 +82,17 @@ def install_pytorch(cuda_version=None, cpu_only=False):
         command = "pip install torch torchvision torchaudio"
     else:
         # 安装 GPU 版本
-        cuda_short = cuda_version.replace('.', '')
-        command = f"pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu{cuda_short}"
+        # 根据 CUDA 版本选择适当的 PyTorch 版本
+        cuda_major = cuda_version.split('.')[0]
+        if int(cuda_major) >= 12:
+            # CUDA 12.x
+            command = "pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121"
+        elif int(cuda_major) == 11:
+            # CUDA 11.x
+            command = "pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118"
+        else:
+            print(f"警告: CUDA {cuda_version} 可能不受最新 PyTorch 支持，将尝试安装 CPU 版本")
+            command = "pip install torch torchvision torchaudio"
     
     return run_command(command, "安装 PyTorch")
 
@@ -99,7 +107,15 @@ def install_pytorch_geometric(torch_version, cuda_version=None, cpu_only=False):
     if cpu_only or cuda_version is None:
         ext_url = f"https://data.pyg.org/whl/torch-{torch_version}+cpu.html"
     else:
-        ext_url = f"https://data.pyg.org/whl/torch-{torch_version}+cu{cuda_version.replace('.', '')}.html"
+        # 根据 CUDA 版本选择适当的 URL
+        cuda_major = cuda_version.split('.')[0]
+        if int(cuda_major) >= 12:
+            ext_url = f"https://data.pyg.org/whl/torch-{torch_version}+cu121.html"
+        elif int(cuda_major) == 11:
+            ext_url = f"https://data.pyg.org/whl/torch-{torch_version}+cu118.html"
+        else:
+            print(f"警告: CUDA {cuda_version} 可能不受最新 PyTorch Geometric 支持，将尝试安装 CPU 版本")
+            ext_url = f"https://data.pyg.org/whl/torch-{torch_version}+cpu.html"
     
     command = f"pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f {ext_url}"
     return run_command(command, "安装 PyTorch Geometric 扩展")
@@ -115,6 +131,10 @@ def install_rdkit():
         command = "pip install rdkit"
     
     return run_command(command, "安装 RDKit")
+
+def install_esm():
+    """安装 ESM 模型"""
+    return run_command("pip install fair-esm", "安装 ESM 蛋白质语言模型")
 
 def install_requirements():
     """安装其他依赖项"""
@@ -190,6 +210,11 @@ def main():
     # 安装 RDKit
     if not install_rdkit():
         print("RDKit 安装失败，请检查错误信息并手动安装。")
+        return
+    
+    # 安装 ESM 模型
+    if not install_esm():
+        print("ESM 模型安装失败，请检查错误信息并手动安装。")
         return
     
     # 安装其他依赖项

@@ -295,7 +295,7 @@ class DataPreprocessor:
         print("划分数据集...")
         
         # 随机打乱数据
-        np.random.seed(42)
+        np.random.seed(101113)
         indices = np.random.permutation(len(processed_data))
         
         # 计算划分点

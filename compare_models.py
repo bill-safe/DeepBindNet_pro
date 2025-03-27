@@ -78,8 +78,8 @@ def create_test_data(batch_size=16, noise_level=0.0):
 def compare_models():
     """比较标准模型和门控模型的性能"""
     # 设置随机种子以确保可重复性
-    torch.manual_seed(42)
-    np.random.seed(42)
+    torch.manual_seed(71072)
+    np.random.seed(71072)
     
     # 创建模型
     standard_model = DeepBindNet(
