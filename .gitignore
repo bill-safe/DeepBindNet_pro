@@ -2,3 +2,5 @@
 /model
 /outputs
 /__pycache__
+/prediction_results
+/batch_prediction_results

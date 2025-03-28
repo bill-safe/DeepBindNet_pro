@@ -12,7 +12,7 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 import pickle
 
 from dataset import get_data_loaders
-from model import DeepBindNet
+from model_gated import DeepBindNetGated
 from loss_functions import LogCoshLoss, WeightedLoss
 
 def parse_args():
@@ -359,6 +359,7 @@ def main():
     # 设置设备
     device = torch.device(args.device)
     print(f'使用设备: {device}')
+    print(f'使用门控跨模态注意力机制')
     
     # 设置TensorBoard
     writer = SummaryWriter(log_dir=os.path.join(args.output_dir, 'logs'))
@@ -384,8 +385,8 @@ def main():
         num_workers=args.num_workers
     )
     
-    # 创建模型
-    model = DeepBindNet(
+    # 创建门控版本的模型
+    model = DeepBindNetGated(
         atom_feature_dim=6,
         bond_feature_dim=3,
         hidden_dim=args.hidden_dim,
